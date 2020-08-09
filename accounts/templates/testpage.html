@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% if messages %}
+<div class="alert alert-success">
+    {% for message in messages %}
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="card accounts-card">
+    <div class="card-body">
+        <div class="card-title capitalized heading">
+            <h2>Testpage</h2>
+        </div>
+        <div class="card-text">
+
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ipsum est, finibus sit amet magna nec, 
+                auctor iaculis lorem. Nam et leo condimentum, ultrices leo et, euismod orci. Quisque id maximus metus. 
+                Donec aliquet lobortis ullamcorper. Etiam rutrum nunc sed velit cursus facilisis. Integer velit sapien, 
+                finibus nec dui id, auctor faucibus massa. Suspendisse potenti. Mauris lorem orci, feugiat eget sodales ac, 
+                bibendum eu leo. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; 
+                Mauris id erat at ex bibendum consequat. Aliquam auctor nec felis sed fermentum. Suspendisse lobortis 
+                sapien risus, nec varius justo pharetra quis. Cras molestie molestie lorem finibus rhoncus. 
+                Vivamus posuere ipsum eget orci faucibus, feugiat consequat dui elementum. Donec in ex mi. 
+                Fusce vel dapibus nunc.
+            </p>
+            <p>
+                Mauris nec eros ac risus lacinia mattis. Sed bibendum eros a justo egestas hendrerit id ac quam. 
+                Suspendisse fermentum velit in vehicula aliquam. Integer nec purus ut metus ultricies condimentum. 
+                Nunc gravida libero finibus sagittis aliquam. Proin vel neque cursus, laoreet orci quis, 
+                facilisis augue. Etiam semper libero non urna ornare, vel eleifend nunc luctus.
+            </p>
+
+            <p>
+                Mauris in pretium eros. Donec rutrum, sapien id mollis euismod, dui odio blandit urna, quis 
+                sollicitudin dolor tellus sit amet urna. Duis finibus, leo ac ultrices pellentesque, erat erat 
+                pulvinar libero, ut interdum velit lorem nec velit. Nulla at urna sed ex pulvinar gravida id id ligula. 
+                Sed in lobortis erat. Mauris at felis nec ante dignissim tincidunt a at quam. Aliquam erat volutpat.
+            </p>
+
+            <p>
+                Aenean magna elit, pharetra et malesuada in, imperdiet ut ante. Quisque sit amet imperdiet risus. 
+                Fusce dapibus a ipsum sed maximus. Sed ultrices sem velit, id aliquam arcu sodales porta. 
+                Nam ligula lorem, elementum non velit id, convallis tempor leo. Nulla ut posuere tortor, sed porta odio. 
+                Aenean tempor ultricies enim at iaculis. Nulla pellentesque tristique sapien a pellentesque. 
+                Nullam efficitur urna viverra ex semper, sed venenatis nisi venenatis. Aenean mattis velit massa, 
+                non tincidunt eros scelerisque sit amet. Nam eget ante ac turpis efficitur scelerisque tincidunt 
+                non eros.
+            </p>
+
+
+
+            <p>
+                Maecenas non ex lacus. Cras sit amet tristique sem. Sed a nisl ultrices, sagittis enim eget, 
+                vestibulum sem. Aliquam nec ullamcorper nisl. Sed lacinia neque diam, ullamcorper iaculis mi 
+                laoreet malesuada. Integer commodo fermentum nisl ut finibus. Vestibulum scelerisque risus ac 
+                felis accumsan, vel semper lectus elementum. Cras id nunc quis nunc mattis varius. Phasellus 
+                laoreet eleifend dapibus. Integer mattis mauris placerat ligula pulvinar, lacinia aliquam libero 
+                finibus. Aliquam id massa sed urna molestie porttitor.
+            </p>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

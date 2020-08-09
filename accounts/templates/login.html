@@ -1,0 +1,50 @@
+{% extends 'accounts_base.html' %}
+{% block content %}
+
+<div class="card-title accounts-card-title">
+    <i class="fas fa-user-circle fa-9x accounts-logo"></i>
+    <h2>Account Sign-In</h2>
+</div>
+
+<div class="card-text">
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+            <div class="input-group-prepend form-labels">
+                <span class="input-group-text">Username</span>
+            </div>
+            {{ login_form.username }}
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend form-labels">
+                <span class="input-group-text">Password</span>
+            </div>
+            {{ login_form.password }}
+        </div>
+
+        <button class="btn btn-primary" type="submit">Login</button> <a
+            href="{% url 'password_reset' %}">Forgot password?</a>
+    </form>
+    <hr />
+    <a role="button" href="{% url 'register' %}" class="btn btn-danger">Register</a>
+
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'error' %}
+    <div class="alert alert-danger login-errors">
+        {{ message }}
+    </div>
+    {% else %}
+    <div class="alert alert-success login-errors">
+        {{ message }}
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    {% endif %}
+
+</div>
+
+                
+{% endblock %}

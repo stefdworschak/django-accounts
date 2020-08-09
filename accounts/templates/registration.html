@@ -1,0 +1,52 @@
+{% extends 'accounts_base.html' %}
+{% block content %}
+
+<div class="card-title accounts-card-title">
+    <i class="fas fa-user-circle fa-9x accounts-logo"></i>
+    <h2>Account Registration</h2>
+</div>
+<div class="card-text">
+    
+    <form method="POST">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+            <div class="input-group-prepend form-labels-long">
+                <span class="input-group-text">Email Address</span>
+            </div>
+            {{ registration_form.username }}
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend form-labels-long">
+                <span class="input-group-text">Password</span>
+            </div>
+            {{ registration_form.password1 }}
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend form-labels-long">
+                <span class="input-group-text">Confirm Password</span>
+            </div>
+            {{ registration_form.password2 }}
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend form-labels-long">
+                <span class="input-group-text">Select Language</span>
+            </div>
+            {{ registration_form.language }}
+        </div>
+        
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+    <hr />
+    <a role="button" href="{% url 'login' %}" class="btn btn-danger" >Login</a>
+    
+    {% if registration_form.errors %}
+        <div class="alert alert-danger registration-errors">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+
+</div>
+                
+{% endblock %}

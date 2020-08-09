@@ -1,0 +1,6 @@
+*.sqlite3
+.env
+.vscode
+main/.env
+staticfiles
+Pipfile

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% block extra_js %}
+<script src="{% static 'js/user_account.js' %}"></script>
+{% endblock %}
+
+{% if messages or change_user_form.errors %}
+<div class="alert alert-success">
+    <ul>
+        {% for message in messages %}
+           <li>{{ message }}</li>
+        {% endfor %}
+        {% for field in change_password_form %}
+            {% for error in field.errors %}
+                    <li>{{ error|escape }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>    
+</div>
+{% endif %}
+
+<div class="card accounts-card">
+    <div class="card-body">
+
+        <div class="card-title capitalized heading">
+            <h2>{% if request.first_name %}{{request.first_name}}'s {% endif %} Profile</h2>
+        </div>
+
+        <div class="card-text">
+
+            <div class="row">
+                <div class="col-md-12 col-lg-4">
+                    <div class="account-image-container">
+                        <form id="image-upload-form" method="POST" action="/accounts/upload_image">
+                            {% csrf_token %}
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+                                alt="Anonymous Account Image" class="account-image" />
+                            <div class="middle" aria-label="Change Profile Image">
+                                <label class="change-account-image-icon"><i class="fas fa-edit fa-2x"></i>
+                                    <input type="file" class="change-account-image-input" />
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-0 col-lg-1"></div>
+                <div class="col-md-12 col-lg-7">
+                    
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend form-labels-long">
+                              <span class="input-group-text">Email</span>
+                            </div>
+                            {{change_user_form.email}}
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend form-labels-long">
+                              <span class="input-group-text">First Name</span>
+                            </div>
+                            {{change_user_form.first_name}}
+                        </div>
+                        
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text">Last Name</span>
+                            </div>
+                            {{change_user_form.last_name}}
+                        </div>
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend form-labels-long">
+                              <span class="input-group-text">Language</span>
+                            </div>
+                            {{change_user_form.language}}
+                        </div>
+
+                        <button class="btn btn-primary" role="submit">Save Changes</button>
+
+                    </form>
+
+                    <hr />
+
+                    <a role="button" href="/change_password" class="btn btn-secondary">Change Password</a>
+
+                </div>
+            </div>
+
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}
