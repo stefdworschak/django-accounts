@@ -92,3 +92,10 @@ body {
     display: none;
 }
   
+.form-labels span.input-group-text {
+    min-width: 120px;
+}
+
+.form-labels-long span.input-group-text {
+    min-width: 180px;
+}
