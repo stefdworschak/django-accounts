@@ -6,7 +6,6 @@ from django.contrib.auth.forms import (UserCreationForm,
                                        PasswordResetForm, SetPasswordForm,
                                        UserChangeForm)
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 
 from .models import CustomUser, LANG_CHOICES
 
@@ -133,4 +132,4 @@ class CustomLoggedinUserChangeForm(UserChangeForm):
 
     class Meta:
         model = CustomUser
-        fields = ('email','first_name', 'last_name', 'language',)
+        fields = ('email', 'first_name', 'last_name', 'language',)

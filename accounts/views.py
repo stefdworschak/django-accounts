@@ -3,6 +3,7 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, reverse
 
 from main.helpers import hashstring
@@ -37,7 +38,6 @@ def register(request):
                 messages.error(request,
                                'Username and password combination is wrong.')
         else:
-            print(registration_form.errors)
             for e in registration_form.errors.values():
                 messages.error(request, e)
     else:
@@ -72,6 +72,7 @@ def login(request):
 
 @login_required
 def change_password(request):
+    """ Page to change an existing and logged-in user's password """
     if request.method == 'POST':
         change_password_form = CustomChangePasswordForm(request.POST)
 
@@ -83,18 +84,17 @@ def change_password(request):
                 if (request.POST.get('new_password1')
                         == request.POST.get('new_password2')):
                     user.set_password(request.POST.get('new_password1'))
+                    user.save()
                     messages.success(request,
                                      'Password changed successfully.')
                 else:
-                    messages.error(
-                        request,
-                        'New password and Confirm Password were not the same value.')  # noqa: E501
+                    messages.error(request, 'New password and Confirm Password were not the same value.')  # noqa: E501
             else:
                 messages.error(request,
                                'Username and password combination is wrong.')
         else:
-            messages.error(request,
-                           'Username and password combination is wrong.')
+            for e in change_password_form.errors.values():
+                messages.error(request, e)
 
     else:
         change_password_form = CustomChangePasswordForm()
@@ -104,9 +104,11 @@ def change_password(request):
 
 @login_required
 def user_account(request):
-    """ Shows a basic user account page """
+    """ Shows a basic user account page with photo upload, details
+        change form and link to change password page """
     if request.method == 'POST':
-        change_user_form = CustomLoggedinUserChangeForm(request.POST)
+        change_user_form = CustomLoggedinUserChangeForm(request.POST,
+                                                        instance=request.user)
         if change_user_form.is_valid():
             user = CustomUser.objects.filter(id=request.user.id)
             if user:
@@ -120,9 +122,6 @@ def user_account(request):
             else:
                 messages.error(request,
                                'An unexpected error occurred: Logged in user not found')  # noqa: E501
-        else:
-            messages.error(request,
-                           'Username and password combination is wrong.')
     else:
         change_user_form = CustomLoggedinUserChangeForm(instance=request.user)
     return render(request, 'user_account.html',
