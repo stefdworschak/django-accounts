@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import os
-
 from django.conf import settings
 from django.contrib import auth
 from django.contrib import messages
@@ -26,9 +24,10 @@ def register(request):
         registration_form = UserRegistrationForm(request.POST)
 
         if registration_form.is_valid():
+            registration_form.instance.username = request.POST.get('email')
             user = registration_form.save()
 
-            user = auth.authenticate(username=request.POST.get('username'),
+            user = auth.authenticate(email=request.POST.get('email'),
                                      password=request.POST.get('password1'))
             if user:
                 auth.login(user=user, request=request)
@@ -38,6 +37,7 @@ def register(request):
                 messages.error(request,
                                'Username and password combination is wrong.')
         else:
+            print(registration_form.errors)
             for e in registration_form.errors.values():
                 messages.error(request, e)
     else:
@@ -56,7 +56,7 @@ def login(request):
         login_form = UserLoginForm(request.POST)
 
         if login_form.is_valid():
-            user = auth.authenticate(username=request.POST.get('username'),
+            user = auth.authenticate(email=request.POST.get('email'),
                                      password=request.POST.get('password'))
             if user:
                 auth.login(user=user, request=request)
@@ -77,16 +77,21 @@ def change_password(request):
 
         if change_password_form.is_valid():
             user = auth.authenticate(
-                username=request.user.username,
+                email=request.user.email,
                 password=request.POST.get('current_password'))
-
-            if (request.POST.get('new_password1')
-                    == request.POST.get('new_password2')):
-                user.set_password(request.POST.get('new_password1'))
+            if user:
+                if (request.POST.get('new_password1')
+                        == request.POST.get('new_password2')):
+                    user.set_password(request.POST.get('new_password1'))
+                    messages.success(request,
+                                     'Password changed successfully.')
+                else:
+                    messages.error(
+                        request,
+                        'New password and Confirm Password were not the same value.')  # noqa: E501
             else:
-                messages.error(
-                    request,
-                    'New password and Confirm Password were not the same value.')  # noqa: E501
+                messages.error(request,
+                               'Username and password combination is wrong.')
         else:
             messages.error(request,
                            'Username and password combination is wrong.')
@@ -100,7 +105,6 @@ def change_password(request):
 @login_required
 def user_account(request):
     """ Shows a basic user account page """
-    print(request.user.id)
     if request.method == 'POST':
         change_user_form = CustomLoggedinUserChangeForm(request.POST)
         if change_user_form.is_valid():
@@ -108,6 +112,7 @@ def user_account(request):
             if user:
                 user.update(
                     email=request.POST.get('email'),
+                    username=request.POST.get('email'),
                     first_name=request.POST.get('first_name'),
                     last_name=request.POST.get('last_name'),
                     language=request.POST.get('language'))
@@ -130,7 +135,7 @@ def user_account(request):
 @login_required
 def upload_image(request):
     """ Upload profile image """
-    hashed_email = hashstring(request.user.username, length=10)
+    hashed_email = hashstring(request.user.email, length=10)
     uploaded_file = request.FILES['profile_image']
     upload_name = f'{hashed_email}/{hashed_email}_profile_image.png'
     # Needed for debug if image exists
