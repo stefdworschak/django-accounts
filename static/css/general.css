@@ -99,3 +99,9 @@ body {
 .form-labels-long span.input-group-text {
     min-width: 180px;
 }
+
+.uploaded-image {
+    width:100%;
+    background-size:cover;
+    background-repeat:no-repeat;
+}

@@ -4,3 +4,4 @@
 main/.env
 staticfiles
 Pipfile
+media

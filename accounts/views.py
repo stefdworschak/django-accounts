@@ -1,15 +1,19 @@
 #!/usr/bin/env python
+import os
+
 from django.conf import settings
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, reverse
 
-from accounts.helpers import lang_choices_as_dict
+from main.helpers import hashstring
+from accounts.helpers import (lang_choices_as_dict, format_profile_photo,
+                              delete_image_in_debug)
 from accounts.forms import (UserLoginForm, UserRegistrationForm,
                             CustomChangePasswordForm,
                             CustomLoggedinUserChangeForm)
-from accounts.models import CustomUser
+from accounts.models import CustomUser, ProfileImage
 
 LOGIN_REDIRECT = settings.LOGIN_REDIRECT
 
@@ -66,7 +70,7 @@ def login(request):
     return render(request, 'login.html', {'login_form': login_form})
 
 
-#@login_required
+@login_required
 def change_password(request):
     if request.method == 'POST':
         change_password_form = CustomChangePasswordForm(request.POST)
@@ -96,6 +100,7 @@ def change_password(request):
 @login_required
 def user_account(request):
     """ Shows a basic user account page """
+    print(request.user.id)
     if request.method == 'POST':
         change_user_form = CustomLoggedinUserChangeForm(request.POST)
         if change_user_form.is_valid():
@@ -121,8 +126,21 @@ def user_account(request):
                     'change_user_form': change_user_form
                   })
 
+
 @login_required
 def upload_image(request):
+    """ Upload profile image """
+    hashed_email = hashstring(request.user.username, length=10)
+    uploaded_file = request.FILES['profile_image']
+    upload_name = f'{hashed_email}/{hashed_email}_profile_image.png'
+    # Needed for debug if image exists
+    delete_image_in_debug(request, upload_name)
+    profile_img = ProfileImage(
+        upload_name=upload_name,
+        upload=format_profile_photo(uploaded_file, upload_name),
+        user=request.user
+    )
+    profile_img.save()
     return redirect(reverse('account'))
 
 
@@ -143,3 +161,31 @@ def testpage(request):
 def handler404(request, exception):
     """ Redirect to the index page if page is not found """
     return redirect(reverse('login'))
+
+
+def image_crop(request):
+    upload_name = None
+    if request.FILES:
+        hashed_email = hashstring(request.user.username, length=10)
+        uploaded_file = request.FILES['profile_image']
+        # content_type = uploaded_file.content_type.split("/")[1]
+        # uploaded_file.name = upload_name
+        upload_name = f'{hashed_email}/{hashed_email}_profile_image.png'
+
+        profile_image = ProfileImage.objects.filter(user=request.user.id)
+        if profile_image:
+            profile_image.delete()
+            if os.path.exists(f'.{settings.MEDIA_URL}{upload_name}'):
+                os.remove(f'.{settings.MEDIA_URL}{upload_name}')
+        profile_img = ProfileImage(
+            upload_name=upload_name,
+            # upload=uploaded_file,
+            upload=format_profile_photo(uploaded_file, upload_name),
+            user=request.user
+        )
+        profile_img.save()
+
+        profile_image = ProfileImage.objects.filter(upload_name=upload_name)
+        print(profile_image[0].__dict__)
+
+    return render(request, 'image_crop.html', {'image': upload_name})
