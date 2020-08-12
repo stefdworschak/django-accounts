@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+{% block extra_js %}
+<script src="{% static 'js/user_account.js' %}"></script>
+{% endblock %}
+
+{% load custom_tags %}
+
+<form method="POST" id="imageCrop" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="profile_image" />
+</form>
+
+<p style="width:350px; border: 2px solid gray;">
+    {% if image %}
+    <img src="{{ request.user.profile_image.upload_name|generate_media_url }}" style="width: 100%; border-radius:  50%;" />
+    {% endif %}
+</p>
+
+<script>
+    $('input[name="profile_image"]').on('input', function(){
+        $('#imageCrop').submit();
+    })
+</script>
+
+{% endblock %}

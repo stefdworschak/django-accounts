@@ -6,7 +6,6 @@ from django.contrib.auth.forms import (UserCreationForm,
                                        PasswordResetForm, SetPasswordForm,
                                        UserChangeForm)
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 
 from .models import CustomUser, LANG_CHOICES
 
@@ -29,7 +28,7 @@ class CustomUserChangeForm(UserChangeForm):
 
 class UserLoginForm(forms.Form):
     """ Form to handle login """
-    username = forms.CharField(widget=forms.TextInput(
+    email = forms.CharField(widget=forms.TextInput(
                                attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(
                                attrs={'class': 'form-control'}))
@@ -37,7 +36,7 @@ class UserLoginForm(forms.Form):
 
 class UserRegistrationForm(UserCreationForm):
     """ Form to handle user registration """
-    username = forms.EmailField(widget=forms.TextInput(
+    email = forms.EmailField(widget=forms.TextInput(
                                 attrs={'class': 'form-control'}))
     password1 = forms.CharField(widget=forms.PasswordInput(
                                 attrs={'class': 'form-control'}))
@@ -49,11 +48,11 @@ class UserRegistrationForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['email', 'username', 'password1', 'password2']
+        fields = ['email', 'password1', 'password2']
 
     def clean_email(self):
-        email = self.cleaned_data.get('username')
-        username = email 
+        email = self.cleaned_data.get('email')
+        username = email
 
         if CustomUser.objects.filter(email=email).exclude(username=username):
             raise ValidationError(u"Email Addres must be unique")
@@ -133,4 +132,4 @@ class CustomLoggedinUserChangeForm(UserChangeForm):
 
     class Meta:
         model = CustomUser
-        fields = ('email','first_name', 'last_name', 'language',)
+        fields = ('email', 'first_name', 'last_name', 'language',)

@@ -5,26 +5,35 @@
 <script src="{% static 'js/user_account.js' %}"></script>
 {% endblock %}
 
-{% if messages or change_user_form.errors %}
-<div class="alert alert-success">
-    <ul>
-        {% for message in messages %}
-           <li>{{ message }}</li>
-        {% endfor %}
-        {% for field in change_password_form %}
-            {% for error in field.errors %}
-                    <li>{{ error|escape }}</li>
+{% load custom_tags %}
+
+{% if change_user_form.errors %}
+    <div class="alert alert-danger">
+        <ul style="margin-bottom:0px;">
+        {% for field in change_user_form %}
+            {% for error in field.errors %}        
+                <li>{{ error|escape }}</li>
             {% endfor %}
         {% endfor %}
-    </ul>    
-</div>
+        {% for error in change_user_form.non_field_errors %}
+            <li>{{ error|escape }}</li>
+        {% endfor %}
+        </ul>   
+    </div>
 {% endif %}
+ 
+{% if messages %}
+    <div class="alert alert-success">
+    {% for message in messages %} {{message}} {% endfor %}
+    </div>
+{% endif %}
+
 
 <div class="card accounts-card">
     <div class="card-body">
 
         <div class="card-title capitalized heading">
-            <h2>{% if request.first_name %}{{request.first_name}}'s {% endif %} Profile</h2>
+            <h2>{% if request.user.first_name %}{{request.user.first_name}}'s {% endif %} Profile</h2>
         </div>
 
         <div class="card-text">
@@ -32,13 +41,18 @@
             <div class="row">
                 <div class="col-md-12 col-lg-4">
                     <div class="account-image-container">
-                        <form id="image-upload-form" method="POST" action="/accounts/upload_image">
+                        <form id="image-upload-form" method="POST" action="/accounts/upload_image" enctype="multipart/form-data">
                             {% csrf_token %}
+                            {% if request.user.profile_image %}
+                            <img src="{{ request.user.profile_image.upload_name|generate_media_url }}"
+                                alt="User's Account Image" class="account-image" />
+                            {% else %}
                             <img src="https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
                                 alt="Anonymous Account Image" class="account-image" />
+                            {% endif %}
                             <div class="middle" aria-label="Change Profile Image">
                                 <label class="change-account-image-icon"><i class="fas fa-edit fa-2x"></i>
-                                    <input type="file" class="change-account-image-input" />
+                                    <input type="file" class="change-account-image-input" name="profile_image" />
                                 </label>
                             </div>
                         </form>
@@ -51,7 +65,7 @@
                         {% csrf_token %}
                         <div class="input-group mb-3">
                             <div class="input-group-prepend form-labels-long">
-                              <span class="input-group-text">Email</span>
+                              <span class="input-group-text">Email Address</span>
                             </div>
                             {{change_user_form.email}}
                         </div>
@@ -64,7 +78,7 @@
                         </div>
                         
                         <div class="input-group mb-3">
-                            <div class="input-group-prepend">
+                            <div class="input-group-prepend form-labels-long">
                               <span class="input-group-text">Last Name</span>
                             </div>
                             {{change_user_form.last_name}}

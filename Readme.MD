@@ -17,6 +17,8 @@ For details see [CustomUser model](#CustomUser-model)
 ## Pre-requisites
 
 - Python3.x
+- libjpeg-dev (image cropping)
+    ` sudo apt-get install libjpeg-dev`
 
 ## Setup
 

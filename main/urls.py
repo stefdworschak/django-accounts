@@ -16,13 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
+from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-
 
 from accounts.views import (testpage, login, register, change_password,
                             user_account, logout)
 from accounts.urls import urlpatterns as accounts_urls
 from accounts.forms import CustomPasswordResetForm, CustomSetPasswordForm
+
+from .settings import MEDIA_ROOT, MEDIA_URL
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -50,5 +53,7 @@ urlpatterns = [
     # url patterns for additional django apps
     path('', testpage, name='testpage'),
 ]
+
+urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
 
 handler404 = 'accounts.views.handler404'
