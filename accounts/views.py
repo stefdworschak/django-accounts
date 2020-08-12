@@ -161,31 +161,3 @@ def testpage(request):
 def handler404(request, exception):
     """ Redirect to the index page if page is not found """
     return redirect(reverse('login'))
-
-
-def image_crop(request):
-    upload_name = None
-    if request.FILES:
-        hashed_email = hashstring(request.user.username, length=10)
-        uploaded_file = request.FILES['profile_image']
-        # content_type = uploaded_file.content_type.split("/")[1]
-        # uploaded_file.name = upload_name
-        upload_name = f'{hashed_email}/{hashed_email}_profile_image.png'
-
-        profile_image = ProfileImage.objects.filter(user=request.user.id)
-        if profile_image:
-            profile_image.delete()
-            if os.path.exists(f'.{settings.MEDIA_URL}{upload_name}'):
-                os.remove(f'.{settings.MEDIA_URL}{upload_name}')
-        profile_img = ProfileImage(
-            upload_name=upload_name,
-            # upload=uploaded_file,
-            upload=format_profile_photo(uploaded_file, upload_name),
-            user=request.user
-        )
-        profile_img.save()
-
-        profile_image = ProfileImage.objects.filter(upload_name=upload_name)
-        print(profile_image[0].__dict__)
-
-    return render(request, 'image_crop.html', {'image': upload_name})

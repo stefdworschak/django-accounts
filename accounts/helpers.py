@@ -22,6 +22,7 @@ def lang_choices_as_dict():
 
 
 def format_profile_photo(upload, upload_name):
+    """ Crop and resize profile image """
     resize = False
     img = Image.open(upload)
     width, height = img.size
@@ -56,6 +57,8 @@ def format_profile_photo(upload, upload_name):
 
 
 def delete_image_in_debug(request, upload_name):
+    """ Checks if run in DEBUG and removes local file to be able to save
+    a new version. Not necessary in prod with AWS S3 """
     profile_image = ProfileImage.objects.filter(user=request.user.id)
     if profile_image and settings.DEBUG:
         profile_image.delete()
