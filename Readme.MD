@@ -87,3 +87,5 @@ full_name.is_list_display = True
 full_name.is_list_filter = True
 
 ```
+
+## Hosting Static and Media Files on AWS S3
