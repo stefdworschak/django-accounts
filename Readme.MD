@@ -87,3 +87,64 @@ full_name.is_list_display = True
 full_name.is_list_filter = True
 
 ```
+
+## Hosting Static and Media Files on AWS S3
+
+In order to be able to use AWS S3 to host static and media files on AWS S3 storage you need to create an IAM user account and an S3 Storage bucket on AWS.
+
+### Create a new IAM user
+
+1) Go to https://console.aws.amazon.com/iam/home
+2) Click on "Add user"
+3) Enter a user name, select "Programmatic access" and click on "Next:Permissions"
+4) Click on "Create group"
+5) Enter a group name, search and select for the existing policy called "`AmazonS3FullAccess`" and click on "Create group"
+6) Click on "Next:Tags" and again on "Next:Review"
+7) Click on "Create User"
+8) You will be shown the created user, the Access key ID and a hidden "Secret access key"
+9) Click on "show" to display the "Secret access key" and copy all details to your `.env` file
+
+### Create an S3 storage bucket
+
+<b>IMPORTANT:</b> Don't store any confidential information in the S3 Storage bucket, this should only be used to serve static files
+
+1) Go to https://s3.console.aws.amazon.com/s3/home
+2) Click on "Create bucket"
+3) Enter a (DNS-compliant) bucket name, select a region and (if you have any existing buckets) select to apply settings from an existing bucket
+4) Configure options (if wanted) or click "Next"
+5) Untick "Block all public access" (this is necessary in order for your files to be accessible on your website) and click on "Next"
+6) Review your settings and click on "Create bucket" to finish
+7) Copy the new bucket name and custom domain into your `.env` file
+
+
+### Setting permissions for website access
+
+Configure your storage bucket using the Bucket Policy file, CORS configuration
+file and the Block Public Access screenshot in the the `deployment_configurations` folder 
+
+<b>Further Reading:</b>
+
+- [AWS's Setting permissions for website access](https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteAccessPermissionsReqd.html)
+
+
+## Adding an external SMTP server (e.g Sendgrid)
+
+If you have your own SMTP server simpy add your details to the `.env` file.
+
+If not create an email/SMTP account (e.g. Sendgrid, Gmail, etc) and add the details to your `.env` file.
+
+Further Reading:
+- [Sendgrid Single-Sender Verification](https://sendgrid.com/docs/ui/sending-email/sender-verification/)
+- [Gmail Help IMAP/SMTP settings](https://support.google.com/mail/answer/7126229?hl=en)
+
+## .env file
+
+Your `.env` file should include the following details:
+
+```
+S3_USER=[IAM user account name]
+AWS_ACCESS_KEY_ID=[IAM ACCESS KEY ID]
+AWS_SECRET_ACCESS_KEY=[IAM SECRET ACCESS KEY]
+AWS_STORAGE_BUCKET_NAME=[S3 Bucket Name]
+AWS_S3_CUSTOM_DOMAIN=[S3 Bucket Name].s3.amazonaws.com
+```

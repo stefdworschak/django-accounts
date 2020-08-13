@@ -186,3 +186,24 @@ if not DEBUG:
 
 LOGIN_URL = '/login/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+LOG_PATH = os.path.join(BASE_DIR, 'logs')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'error.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
