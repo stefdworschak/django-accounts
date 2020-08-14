@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ValidationError
+from django.core.cache import cache
 from django.shortcuts import render, redirect, reverse
 
 from main.helpers import hashstring
@@ -145,6 +145,7 @@ def upload_image(request):
         user=request.user
     )
     profile_img.save()
+    cache.delete(upload_name)
     return redirect(reverse('account'))
 
 
