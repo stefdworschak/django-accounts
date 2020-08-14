@@ -40,7 +40,8 @@ def create_presigned_s3_url(bucket_key, expiration=3600,
         service_name='s3',
         aws_access_key_id=AWS_ACCESS_KEY_ID,
         aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-        config=Config(signature_version=signature_version),
+        config=Config(s3={'addressing_style': 'path'},
+                      signature_version=signature_version),
         region_name=AWS_DEFAULT_REGION,
 
     )
@@ -50,12 +51,6 @@ def create_presigned_s3_url(bucket_key, expiration=3600,
             Params={'Bucket': AWS_STORAGE_BUCKET_NAME,
                     'Key': bucket_key},
             ExpiresIn=expiration)
-        print(s3_client.list_buckets()['Owner'])
-        print(s3_client.list_objects(Bucket=AWS_STORAGE_BUCKET_NAME,
-                                     Prefix=bucket_key))
-        for key in s3_client.list_objects(Bucket=AWS_STORAGE_BUCKET_NAME,
-                                          Prefix=bucket_key)['Contents']:
-            print("Key: ", key['Key'])
     except ClientError as client_error:
         logging.error(client_error)
         return None
