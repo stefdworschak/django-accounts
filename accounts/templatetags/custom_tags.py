@@ -18,6 +18,6 @@ def generate_media_url(filename):
         media_prefix = settings.MEDIA_URL.replace(custom_domain, '')
         presigned_url = create_presigned_s3_url(f'{media_prefix}{filename}')
         if presigned_url:
-            cache.set(filename, presigned_url)
+            cache.set(filename, presigned_url, timeout=3600)
             return presigned_url
         return settings.DEFAULT_PROFILE_IMAGE
