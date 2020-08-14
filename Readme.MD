@@ -18,7 +18,11 @@ For details see [CustomUser model](#CustomUser-model)
 
 - Python3.x
 - libjpeg-dev (image cropping)
-    ` sudo apt-get install libjpeg-dev`
+
+    ```
+    sudo apt-get install libjpeg-dev
+    sudo apt-get install libjpeg8-dev
+    ```
 
 ## Setup
 
