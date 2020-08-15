@@ -23,6 +23,16 @@ For details see [CustomUser model](#CustomUser-model)
     sudo apt-get install libjpeg-dev
     sudo apt-get install libjpeg8-dev
     ```
+- redis-server
+    ```
+    sudo apt install redis-server
+    
+    # Check if redis is running
+    redis-cli ping
+    -> PONG
+
+    ```
+
 
 ## Setup
 
