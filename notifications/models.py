@@ -2,8 +2,7 @@ from asgiref.sync import async_to_sync
 import channels.layers
 
 from django.db import models
-from django.db.models.signals import post_save
-# from django.dispatch import receiver
+from django.db.models.signals import m2m_changed
 
 from accounts.models import CustomUser
 
@@ -50,15 +49,18 @@ class Notification(models.Model):
 
 
 def send_notification(sender, instance, **kwargs):
-    print("NotificationThread created")
-    for recipient in instance.recipients.all():
+    if kwargs.get('action') != 'post_add':
+        return
+    user_ids = list(kwargs.get('pk_set'))
+    for user_id in user_ids:
+        recipient = CustomUser.objects.get(id=user_id)
         new_notification = Notification(
             recipient=recipient,
             notification_thread=instance,
             status='unread'
         )
         new_notification.save()
-        async_to_sync(channel_layer.group_send)(f'user{recipient.id}', {
+        async_to_sync(channel_layer.group_send)(f'user{user_id}', {
             'type': 'send_message',
             'subject': instance.subject,
             'message': instance.text,
@@ -69,4 +71,5 @@ def send_notification(sender, instance, **kwargs):
     pass
 
 
-post_save.connect(send_notification, sender=NotificationThread)
+m2m_changed.connect(send_notification,
+                    sender=NotificationThread.recipients.through)
