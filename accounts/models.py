@@ -20,11 +20,13 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
+        user.profile_image = None
+        user.username = email
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, password):
-        user = self.create_user(email, usernprofile_imageame=email, password=password)
+        user = self.create_user(email=email, password=password)
         user.is_superuser = True
         user.is_staff = True
         user.save(using=self._db)
@@ -59,6 +61,8 @@ class CustomUser(AbstractUser):
     pass
 
     def __str__(self):
+        if not self.first_name and not self.last_name:
+            return self.email
         return self.first_name + ' ' + self.last_name
 
 
@@ -68,7 +72,8 @@ class ProfileImage(models.Model):
 
     upload_name = models.CharField(max_length=255)
     upload = models.FileField(upload_to=upload_path)
-    user = models.OneToOneField(CustomUser, related_name='profile_image',
+    user = models.OneToOneField(CustomUser,
+                                related_name='profile_image',
                                 on_delete=models.CASCADE)
 
     def __str__(self):

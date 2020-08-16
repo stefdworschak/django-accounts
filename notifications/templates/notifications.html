@@ -1,0 +1,63 @@
+{% load static %}
+<script src="{% static 'js/jquery.min.js' %}"></script>
+
+<h1>
+    Notifications
+</h1>
+
+<ul id="notifications">
+
+</ul>
+
+{{request.user.id|json_script:'user_id'}}
+<script>
+let channel_closed_unexpectedly = 0;
+
+function setChannels(url){
+    const webSocket = new WebSocket(url);
+
+    webSocket.onmessage = function(e) {
+        console.log(e)
+        const data = JSON.parse(e.data);
+        let notifications = $('#notifications');
+        let notification = $('<li></li>');
+        let notification_text = $('<ul></ul>');
+        let subject = $('<li>Subject: <span></span></li>');
+        let category = $('<li>Categor: <span></span></li>');
+        let message = $('<li>Message: <span></span></li>');
+
+        subject.find('span').text(data.subject);
+        category.find('span').text(data.category);
+        message.find('span').text(data.message);
+        
+        notification_text.append(subject);
+        notification_text.append(category);
+        notification_text.append(message);
+
+        notification.append(notification_text);
+        notifications.append(notification);
+    };
+
+    webSocket.onclose = function(e) {
+        console.error('Web socket closed unexpectedly');
+        if(channel_closed_unexpectedly < 6){
+            channel_closed_unexpectedly++;
+            console.log("Number of times occurred: "+ channel_closed_unexpectedly);
+            setTimeout(function(){
+                setChannels(url);
+            }, 2000)            
+        }
+    };
+
+    webSocket.onopen = function(e) {
+        console.log('Web socket opened successfully.');
+    };
+    return webSocket;
+}
+
+//const user_id = JSON.parse(document.getElementById('user_id').textContent);
+const user_id = 1;
+const connection_uri = `ws://localhost:8000/ws/notifications/user${user_id}/`; 
+console.log(connection_uri);
+setChannels(connection_uri);
+</script>

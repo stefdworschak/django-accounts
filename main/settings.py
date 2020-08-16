@@ -37,6 +37,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'storages',  # used for S3 storage
 
     'accounts',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -88,6 +90,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'TEST': {
+            'NAME': os.path.join(BASE_DIR, 'db_test.sqlite3')
+        },
     }
 }
 
@@ -167,20 +172,19 @@ if not DEBUG:
     EMAIL_USE_TLS = True
     DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
-    AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-    AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-    AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN')
-    AWS_DEFAULT_ACL = None
-    AWS_S3_FILE_OVERWRITE = True
-
-    AWS_LOCATION = 'static'
+    DEFAULT_FILE_STORAGE = 'accounts.storage_backends.PublicMediaStorage'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}{STATIC_URL}'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-    DEFAULT_FILE_STORAGE = 'accounts.storage_backends.PublicMediaStorage'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{PUBLIC_MEDIA_LOCATION}/'
+AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_CUSTOM_DOMAIN = env('AWS_S3_CUSTOM_DOMAIN')
+AWS_DEFAULT_ACL = None
+AWS_S3_FILE_OVERWRITE = True
 
+AWS_LOCATION = 'static'
 
 LOGIN_URL = '/login/'
 LOGOUT_REDIRECT_URL = '/login/'
@@ -205,3 +209,20 @@ LOGGING = {
         },
     },
 }
+
+
+# Channels 2.0
+ASGI_APPLICATION = 'main.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        'CONFIG': {
+            # hosts MUST be a tuple of (host, port)
+            'hosts': [(env('REDIS_HOST'), 6379)],
+        },
+        'symmetric_encryption_keys': [SECRET_KEY],
+    }
+}
+
+# Should be 'ws' for DEBUG and 'wss' (with TLS) in PROD
+WS_PROTOCOL = env('WS_PROTOCOL')

@@ -23,6 +23,7 @@ from accounts.views import (testpage, login, register, change_password,
                             user_account, logout)
 from accounts.urls import urlpatterns as accounts_urls
 from accounts.forms import CustomPasswordResetForm, CustomSetPasswordForm
+from notifications.views import notifications
 
 from .settings import MEDIA_ROOT, MEDIA_URL
 
@@ -52,6 +53,7 @@ urlpatterns = [
     path(r'accounts/', include(accounts_urls)),
     # url patterns for additional django apps
     path('', testpage, name='testpage'),
+    path('notifications/', notifications, name="notifications"),
 ]
 
 urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)
