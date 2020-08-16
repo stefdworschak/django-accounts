@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Notification
-from accounts.models import CustomUser
+from .models import NotificationThread, Notification
 
+admin.site.register(NotificationThread)
 admin.site.register(Notification)
