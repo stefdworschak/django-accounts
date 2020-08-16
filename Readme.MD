@@ -23,9 +23,13 @@ For details see [CustomUser model](#CustomUser-model)
     sudo apt-get install libjpeg-dev
     sudo apt-get install libjpeg8-dev
     ```
-- redis-server
+- redis-server (as service or Docer)
     ```
+    # as service
     sudo apt install redis-server
+
+    # via docker
+    docker run -p 6379:6379 -d redis:latest
     
     # Check if redis is running
     redis-cli ping
