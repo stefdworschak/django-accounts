@@ -1,0 +1,43 @@
+[1mdiff --git a/notifications/models.py b/notifications/models.py[m
+[1mindex bf549d4..edded23 100644[m
+[1m--- a/notifications/models.py[m
+[1m+++ b/notifications/models.py[m
+[36m@@ -2,7 +2,8 @@[m [mfrom asgiref.sync import async_to_sync[m
+ import channels.layers[m
+ [m
+ from django.db import models[m
+[31m-from django.db.models.signals import m2m_changed[m
+[32m+[m[32mfrom django.db.models.signals import post_save[m
+[32m+[m[32m# from django.dispatch import receiver[m
+ [m
+ from accounts.models import CustomUser[m
+ [m
+[36m@@ -49,18 +50,15 @@[m [mclass Notification(models.Model):[m
+ [m
+ [m
+ def send_notification(sender, instance, **kwargs):[m
+[31m-    if kwargs.get('action') != 'post_add':[m
+[31m-        return[m
+[31m-    user_ids = list(kwargs.get('pk_set'))[m
+[31m-    for user_id in user_ids:[m
+[31m-        recipient = CustomUser.objects.get(id=user_id)[m
+[32m+[m[32m    print("NotificationThread created")[m
+[32m+[m[32m    for recipient in instance.recipients.all():[m
+         new_notification = Notification([m
+             recipient=recipient,[m
+             notification_thread=instance,[m
+             status='unread'[m
+         )[m
+         new_notification.save()[m
+[31m-        async_to_sync(channel_layer.group_send)(f'user{user_id}', {[m
+[32m+[m[32m        async_to_sync(channel_layer.group_send)(f'user{recipient.id}', {[m
+             'type': 'send_message',[m
+             'subject': instance.subject,[m
+             'message': instance.text,[m
+[36m@@ -71,5 +69,4 @@[m [mdef send_notification(sender, instance, **kwargs):[m
+     pass[m
+ [m
+ [m
+[31m-m2m_changed.connect(send_notification,[m
+[31m-                    sender=NotificationThread.recipients.through)[m
+[32m+[m[32mpost_save.connect(send_notification, sender=NotificationThread)[m
