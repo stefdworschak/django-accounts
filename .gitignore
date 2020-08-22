@@ -1,8 +1,12 @@
+# Files to ignore
 *.sqlite3
 .env
 .vscode
 main/.env
+.env
+
+# Folders to ignore
 staticfiles
 Pipfile
-media/*
-logs/*
+media
+logs
