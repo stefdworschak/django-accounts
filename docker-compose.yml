@@ -2,8 +2,6 @@ version: "3.4"
 services:
   webapp:
     image: django-accounts
-    environment:
-      - APP_ENV_FILE=/amos/main/.env
     volumes:
       - ${PWD}/db.sqlite3/:/app/db.sqlite3
       - ${PWD}/media/:/app/media/
